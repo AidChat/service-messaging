@@ -1,23 +1,25 @@
-import {NextFunction, Request, Response} from "express";
-import {responseHandler} from "../utils/response-handler";
 import {hasher} from "../utils/methods";
+import {Socket} from "socket.io";
 
-export function verifyClient(request: Request, response: Response, next: NextFunction) {
+export function verifyClient(socket: Socket, next: any) {
     try {
-        let token = request.headers.session;
-        if (!token) throw "Session not available"
+        let token = socket.handshake.headers.session;
+        if (!token) {
+            const err: Error = new Error("Not authorized");
+            next(err);
+        }
         if (token) {
             hasher._verify(token).then((response: any) => {
-                request.body.user = {
-                    email: response.data
-                }
                 next();
             })
-                .catch(() => {
-                    throw "Session not available"
+                .catch((e:any) => {
+                    console.log(e)
+                    const err: Error = new Error("Token expired")
+                    next(err);
                 })
         }
     } catch (e: any) {
-        responseHandler(403, response, {message: e})
+        const err: Error = new Error(e.message);
+        next(err);
     }
 }
