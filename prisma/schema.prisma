@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -11,17 +8,177 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String
-  password  String
-  session   Session? @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  sessionId Int?
+  id           Int       @id @default(autoincrement())
+  email        String    @unique
+  name         String
+  password     String
+  sessionId    Int?
+  Session      Session?
+  Group        Group[]
+  SENT_MESSAGE Message[] @relation("SENT_MESSAGE")
 }
 
 model Session {
   id         Int     @id @default(autoincrement())
   session_id String  @unique
   extended   Boolean @default(false)
-  User       User[]
+  userId     Int?    @unique
+  User       User?   @relation(fields: [userId], references: [id])
+}
+
+model Group {
+  id            Int         @id @default(autoincrement())
+  name          String
+  created_at    DateTime    @default(now())
+  updated_at    DateTime
+  userId        Int[]
+  groupDetailId Int         @unique
+  socketId      Int         @unique
+  GroupDetail   GroupDetail @relation(fields: [groupDetailId], references: [id])
+  Socket        Socket      @relation(fields: [socketId], references: [id])
+  User          User[]
+  Message       Message[]
+}
+
+model GroupDetail {
+  id          Int           @id @unique @default(autoincrement())
+  description String
+  tags        GroupTokens[]
+  Group       Group?
+}
+
+model Socket {
+  id        Int    @id @default(autoincrement())
+  socket_id String @unique
+  Group     Group?
+}
+
+model Message {
+  id               Int            @id @default(autoincrement())
+  content          MessageContent @relation(fields: [messageContentId], references: [id])
+  created_at       DateTime       @default(now())
+  sender           User           @relation("SENT_MESSAGE", fields: [senderId], references: [id])
+  senderId         Int
+  Group            Group?         @relation(fields: [groupId], references: [id])
+  groupId          Int?
+  messageContentId Int
+  status           MESSAGE_SATUS  @default(DELIVERED)
+}
+
+model MessageContent {
+  id      Int                  @id @default(autoincrement())
+  TYPE    MESSAGE_CONTENT_TYPE @default(TEXT)
+  content String
+  caption String?
+  Message Message[]
+}
+
+enum MESSAGE_CONTENT_TYPE {
+  TEXT
+  IMAGE
+}
+
+enum MESSAGE_SATUS {
+  DELIVERED
+  READ
+}
+
+enum GroupTokens {
+  SPORTS
+  MUSIC
+  MOVIES
+  GAMING
+  TRAVEL
+  FOOD
+  TECHNOLOGY
+  FITNESS
+  BOOKS
+  FASHION
+  PHOTOGRAPHY
+  COOKING
+  POLITICS
+  SCIENCE
+  ART
+  PETS
+  BUSINESS
+  EDUCATION
+  HEALTH
+  NATURE
+  HISTORY
+  DIY
+  ENTERTAINMENT
+  GARDENING
+  PARENTING
+  RELATIONSHIPS
+  RELIGION
+  TVSHOWS
+  CARS
+  HIKING
+  OUTDOORS
+  SHOPPING
+  FINANCE
+  DESIGN
+  COMEDY
+  ANIME
+  YOGA
+  DANCE
+  CRAFTS
+  CYCLING
+  PROGRAMMING
+  WRITING
+  TRAVELING
+  NEWS
+  BEAUTY
+  ENVIRONMENT
+  ASTRONOMY
+  PARANORMAL
+  PHILOSOPHY
+  PSYCHOLOGY
+  SPIRITUALITY
+  SELFIMPROVEMENT
+  MENTALHEALTH
+  LOVE
+  FRIENDSHIP
+  GRIEF
+  HOPE
+  ANGER
+  ANXIETY
+  DEPRESSION
+  HAPPINESS
+  STRESS
+  LONELINESS
+  FEAR
+  FORGIVENESS
+  ACCEPTANCE
+  EMPATHY
+  GRATITUDE
+  COMPASSION
+  RESILIENCE
+  TRUST
+  COMMUNICATION
+  KINDNESS
+  MOTIVATION
+  INSPIRATION
+  ENCOURAGEMENT
+  MEDITATION
+  MINDFULNESS
+  REFLECTION
+  DREAMING
+  ADVENTURE
+  DISCOVERY
+  NOSTALGIA
+  CREATIVITY
+  CURIOSITY
+  SIMPLICITY
+  FREEDOM
+  JUSTICE
+  EQUALITY
+  ETHICS
+  LEADERSHIP
+  INNOVATION
+  CHANGE
+  COMMUNITY
+  DIVERSITY
+  INCLUSION
+  SUSTAINABILITY
 }
