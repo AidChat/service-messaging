@@ -9,10 +9,11 @@ export function verifyClient(socket: Socket, next: any) {
             next(err);
         }
         if (token) {
-            hasher._verify(token).then((response: any) => {
+            hasher._verify(token).then(() => {
+
                 next();
             })
-                .catch((e:any) => {
+                .catch((e: any) => {
                     console.log(e)
                     const err: Error = new Error("Token expired")
                     next(err);

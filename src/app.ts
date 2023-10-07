@@ -13,7 +13,7 @@ const httpServer  = ins.listen(port, () => {
     console.log(`⚡️[server]: Server is running at http://localhost:${port}`);
 });
 
-const io = new Index(httpServer, {
+export const io = new Index(httpServer, {
     cors: {
         origin: '*',
         methods: ['*'],
