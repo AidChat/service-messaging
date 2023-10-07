@@ -27,13 +27,11 @@ export const socketHandler = () => {
 
 
             socket.on(SocketListeners._TYPING,({name}) =>{
-                console.log(name)
                 socket.to(<string>socket.handshake.headers.socketid).emit(SocketEmitters.TYPING,{name})
             })
 
         });
     } catch (e) {
-        console.log(e);
         process.exit(1)
     }
 };

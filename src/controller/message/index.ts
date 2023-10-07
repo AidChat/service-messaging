@@ -29,12 +29,7 @@ export function storeMessage(senderEmail: string, groupId: number, content: {
         include: {
             content: true
         }
-    }).then((result: any) => {
-        console.log(result)
     })
-        .catch((error: any) => {
-            console.log(error)
-        })
 }
 
 
