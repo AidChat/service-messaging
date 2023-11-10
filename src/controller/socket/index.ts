@@ -5,7 +5,7 @@ import {Socket} from "socket.io";
 
 export const socketHandler = (socket:Socket) => {
     try {
-        socket.on('JOIN', ({socketId}) => {
+        socket.on(SocketListeners._JOIN, ({socketId}) => {
             socket.join(<string>socketId);
         })
 
@@ -28,7 +28,7 @@ export const socketHandler = (socket:Socket) => {
 
         socket.on(SocketListeners._TYPING, () => {
             hasher._verify(socket.handshake.auth.session).then((response: any) => {
-                socket.to(<string>socket.handshake.auth.socketID).emit(SocketEmitters.TYPING, {name:response.data});
+                socket.broadcast.to(<string>socket.handshake.auth.socketID).emit(SocketEmitters.TYPING, {name:response.data});
             })
 
         })
@@ -54,7 +54,8 @@ export interface Message {
 export enum SocketListeners {
     _MESSAGE = "_MESSAGE",
     _DISCONNECT = '_DISCONNECT',
-    _TYPING = '_TYPING'
+    _TYPING = '_TYPING',
+    _JOIN= '_JOIN'
 }
 
 export enum SocketEmitters {
