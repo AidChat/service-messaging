@@ -13,6 +13,7 @@ model User {
   name         String
   password     String
   sessionId    Int?
+  profileImage String    @default("")
   SENT_MESSAGE Message[] @relation("SENT_MESSAGE")
   Request      Request[]
   Role         Role[]

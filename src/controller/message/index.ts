@@ -32,7 +32,8 @@ export function storeMessage(senderEmail: string, groupId: number, content: {
             sender: {
                 select: {
                     email: true,
-                    name: true
+                    name: true,
+                    profileImage:true
                 }
 
             }
