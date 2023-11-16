@@ -18,6 +18,7 @@ export const socketHandler = (socket:Socket) => {
                         content: data.text
                     })
                         .then((result: any)=>{
+                            result.User = result.sender
                             result.MessageContent = result.content;
                             socket.to(<string>socket.handshake.auth.socketID).emit(SocketEmitters.MESSAGE, result)
                         })

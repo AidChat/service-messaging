@@ -7,11 +7,11 @@ export function storeMessage(senderEmail: string, groupId: number, content: {
     caption?: string
 }) {
 
-   return config._query.message.create({
+    return config._query.message.create({
         data: {
             sender: {
                 connect: {
-                    email:senderEmail
+                    email: senderEmail
                 }
             },
             Group: {
@@ -29,6 +29,13 @@ export function storeMessage(senderEmail: string, groupId: number, content: {
         },
         include: {
             content: true,
+            sender: {
+                select: {
+                    email: true,
+                    name: true
+                }
+
+            }
         }
     })
 }
