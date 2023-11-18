@@ -49,6 +49,7 @@ model GroupDetail {
   id          Int           @id @unique @default(autoincrement())
   description String
   tags        GroupTokens[]
+  icon        String        @default("")
   Group       Group?
 }
 
@@ -212,6 +213,7 @@ enum GroupTokens {
 enum RequestType {
   INVITE
   MANUAL
+  DELETE
 }
 
 enum RoleType {

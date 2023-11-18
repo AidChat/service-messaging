@@ -56,7 +56,8 @@ export enum SocketListeners {
     _MESSAGE = "_MESSAGE",
     _DISCONNECT = '_DISCONNECT',
     _TYPING = '_TYPING',
-    _JOIN= '_JOIN'
+    _JOIN= '_JOIN',
+    _ONLINE='_ONLINE'
 }
 
 export enum SocketEmitters {
