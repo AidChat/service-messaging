@@ -1,5 +1,5 @@
 import {config} from "../../utils/appConfig";
-import {MESSAGE_CONTENT_TYPE} from "@prisma/client";
+import {Message, MESSAGE_CONTENT_TYPE, User} from "@prisma/client";
 
 export function storeMessage(senderEmail: string, groupId: number, content: {
     type: MESSAGE_CONTENT_TYPE,
@@ -33,10 +33,11 @@ export function storeMessage(senderEmail: string, groupId: number, content: {
                 select: {
                     email: true,
                     name: true,
-                    profileImage:true
+                    profileImage: true
                 }
 
-            }
+            },
+
         }
     })
 }
@@ -67,4 +68,22 @@ export function getSocketGroup(socketId: string): Promise<any> {
         }
     })
 
+}
+
+export function createReceiptbyGroup(groupId: number, messageId: number) {
+    try {
+        config._query.group.findFirst({where: {id: groupId}, include: {User: true}})
+            .then((result: any) => {
+                result.User.forEach((user: User) => {
+                    config._query.readReceipt.create({
+                        data: {
+                            user: {connect: {id: user.id}},
+                            Message: {connect: {id: messageId}}
+                        }
+                    })
+                })
+            })
+    } catch (e: any) {
+        console.log(e)
+    }
 }

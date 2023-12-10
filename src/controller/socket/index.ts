@@ -1,4 +1,4 @@
-import {getSocketGroup, storeMessage} from "../message";
+import {createReceiptbyGroup, getSocketGroup, storeMessage} from "../message";
 import {Group, MESSAGE_CONTENT_TYPE} from "@prisma/client";
 import {hasher} from "../../utils/methods";
 import {Socket} from "socket.io";
@@ -18,7 +18,9 @@ export const socketHandler = (socket:Socket) => {
                         content: data.text
                     })
                         .then((result: any)=>{
+                            createReceiptbyGroup(group.id,result.id);
                             result.User = result.sender
+                            result.ReadReceipt = [{}];
                             result.MessageContent = result.content;
                             socket.to(<string>socket.handshake.auth.socketID).emit(SocketEmitters.MESSAGE, result)
                         })
