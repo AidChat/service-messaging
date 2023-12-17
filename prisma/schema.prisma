@@ -8,20 +8,29 @@ datasource db {
 }
 
 model User {
-  id            Int          @id @default(autoincrement())
-  email         String       @unique
-  name          String
-  password      String
-  sessionId     Int?
-  profileImage  String       @default("")
-  readReceiptId Int?
-  Joining       Joining[]
-  SENT_MESSAGE  Message[]    @relation("SENT_MESSAGE")
-  Request       Request[]
-  Role          Role[]
-  Session       Session?
-  ReadReceipt   ReadReceipt? @relation(fields: [readReceiptId], references: [id])
-  Group         Group[]      @relation("GroupToUser")
+  id             Int             @id @default(autoincrement())
+  email          String          @unique
+  name           String
+  password       String
+  sessionId      Int?
+  profileImage   String          @default("")
+  readReceiptId  Int?
+  ActivityStatus ActivityStatus?
+  Joining        Joining[]
+  SENT_MESSAGE   Message[]       @relation("SENT_MESSAGE")
+  ReadReceipt    ReadReceipt[]
+  Request        Request[]
+  Role           Role[]
+  Session        Session?
+  Group          Group[]         @relation("GroupToUser")
+}
+
+model ActivityStatus {
+  id     Int          @id @default(autoincrement())
+  status UserActivity
+  userId Int          @unique
+  date   DateTime     @default(now())
+  user   User         @relation(fields: [userId], references: [id])
 }
 
 model Session {
@@ -89,8 +98,9 @@ model ReadReceipt {
   id        Int           @unique @default(autoincrement())
   status    MessageStatus @default(Sent)
   messageId Int
+  userId    Int
   Message   Message       @relation(fields: [messageId], references: [id])
-  user      User[]
+  User      User          @relation(fields: [userId], references: [id])
 }
 
 model Joining {
@@ -122,6 +132,15 @@ model Role {
   groupId Int
   Group   Group    @relation(fields: [groupId], references: [id])
   User    User     @relation(fields: [userId], references: [id])
+}
+
+enum UserActivity {
+  ONLINE
+  OFFLINE
+  INACTIVE
+  BANNED
+  LEAVE
+  AWAY
 }
 
 enum MessageStatus {

@@ -1,5 +1,6 @@
 import {config} from "../../utils/appConfig";
 import {Message, MESSAGE_CONTENT_TYPE, User} from "@prisma/client";
+import {response} from "express";
 
 export function storeMessage(senderEmail: string, groupId: number, content: {
     type: MESSAGE_CONTENT_TYPE,
@@ -77,13 +78,65 @@ export function createReceiptbyGroup(groupId: number, messageId: number) {
                 result.User.forEach((user: User) => {
                     config._query.readReceipt.create({
                         data: {
-                            user: {connect: {id: user.id}},
-                            Message: {connect: {id: messageId}}
+                            User: {connect: {id: user.id}},
+                            Message: {connect: {id: messageId}},
                         }
-                    })
+                    }).then(result)
                 })
             })
     } catch (e: any) {
         console.log(e)
     }
+}
+
+export function updateMessageRecepientStatus(userId: number, messageId: number) {
+    let status = 'Read';
+    config._query.readReceipt.updateMany({
+        data: {status},
+        where: {messageId, userId}
+    }).then(result => {
+
+    })
+}
+
+export function checkIfReadByAll(messageId: number): Promise<void> {
+    return config._query.message.findUnique({
+        where: {id: messageId},
+        include: {ReadReceipt: true, sender: true, content: true}
+    })
+}
+
+export function getUserGroups(userId: number) {
+    return config._query.group.findMany({
+        where: {
+            User: {
+                some: {
+                    id: userId // Assuming userId is the specific user ID you're looking for
+                }
+            }
+        },
+        include: {
+            Socket: true
+        }
+    })
+}
+
+export function changeUserStatus(userId: number, status: "ONLINE" | "OFFLINE" | "INACTIVE" | "BANNED" | "LEAVE" | "AWAY") {
+    config._query.activityStatus.upsert({
+        where: {
+            userId: userId
+        },
+        update: {
+            status: status
+        },
+        create: {
+            user: {
+                connect: {
+                    id: userId
+                }
+            },
+            status: status,
+        }
+    }).then((result: any) => {
+    })
 }
