@@ -6,7 +6,6 @@ export function verifyClient(socket: Socket, next: any) {
         let token =  socket.handshake.auth.session;
 
         if (!token) {
-
             const err: Error = new Error("Not authorized");
             console.log(err)
             next(err);
