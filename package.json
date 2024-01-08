@@ -19,7 +19,7 @@
   "version": "1.0.0",
   "main": "src/app.ts",
   "scripts": {
-    "dev": "nodemon src/app.ts",
+    "dev": "npx prisma db pull && nodemon src/app.ts",
     "start": "tsc && node ./dist/index.js"
   },
   "author": "",
