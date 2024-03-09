@@ -122,18 +122,16 @@ export function getUserGroups(userId: number) {
 export function changeUserStatus(userId: number, status: "ONLINE" | "OFFLINE" | "INACTIVE" | "BANNED" | "LEAVE" | "AWAY") {
     config._query.activityStatus.upsert({
         where: {
-            userId: userId
+          userId:userId
         },
         update: {
             status: status
         },
         create: {
-            user: {
-                connect: {
-                    id: userId
-                }
-            },
-            status: status,
+
+                userId:userId,
+                status: status,
+
         }
     }).then((result: any) => {
     })
