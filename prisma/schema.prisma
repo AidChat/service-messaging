@@ -15,6 +15,9 @@ model User {
   sessionId      Int?
   profileImage   String          @default("")
   readReceiptId  Int?
+  Type           UserType        @default(Pending)
+  about          String?
+  mobile         Int             @default(0)
   ActivityStatus ActivityStatus?
   Joining        Joining[]
   SENT_MESSAGE   Message[]       @relation("SENT_MESSAGE")
@@ -23,14 +26,6 @@ model User {
   Role           Role[]
   Session        Session?
   Group          Group[]         @relation("GroupToUser")
-}
-
-model ActivityStatus {
-  id     Int          @id @default(autoincrement())
-  status UserActivity
-  userId Int          @unique
-  date   DateTime     @default(now())
-  user   User         @relation(fields: [userId], references: [id])
 }
 
 model Session {
@@ -94,24 +89,6 @@ model MessageContent {
   Message Message[]
 }
 
-model ReadReceipt {
-  id        Int           @unique @default(autoincrement())
-  status    MessageStatus @default(Sent)
-  messageId Int
-  userId    Int
-  Message   Message       @relation(fields: [messageId], references: [id])
-  User      User          @relation(fields: [userId], references: [id])
-}
-
-model Joining {
-  id        Int      @unique @default(autoincrement())
-  timestamp DateTime
-  userId    Int
-  groupId   Int
-  group     Group    @relation(fields: [groupId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
-}
-
 model Request {
   id      String        @unique
   groupId Int
@@ -134,13 +111,30 @@ model Role {
   User    User     @relation(fields: [userId], references: [id])
 }
 
-enum UserActivity {
-  ONLINE
-  OFFLINE
-  INACTIVE
-  BANNED
-  LEAVE
-  AWAY
+model ActivityStatus {
+  id     Int          @id @default(autoincrement())
+  status UserActivity
+  userId Int          @unique
+  date   DateTime     @default(now())
+  User   User         @relation(fields: [userId], references: [id])
+}
+
+model Joining {
+  id        Int      @unique @default(autoincrement())
+  timestamp DateTime
+  userId    Int
+  groupId   Int
+  Group     Group    @relation(fields: [groupId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
+}
+
+model ReadReceipt {
+  id        Int           @unique @default(autoincrement())
+  status    MessageStatus @default(Sent)
+  messageId Int
+  userId    Int
+  Message   Message       @relation(fields: [messageId], references: [id])
+  User      User          @relation(fields: [userId], references: [id])
 }
 
 enum MessageStatus {
@@ -276,4 +270,19 @@ enum RequestStatus {
   ACCEPTED
   REJECTED
   BLOCKED
+}
+
+enum UserActivity {
+  ONLINE
+  OFFLINE
+  INACTIVE
+  BANNED
+  LEAVE
+  AWAY
+}
+
+enum UserType {
+  Seeker
+  Helper
+  Pending
 }

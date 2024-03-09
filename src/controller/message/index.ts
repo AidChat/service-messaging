@@ -1,6 +1,5 @@
 import {config} from "../../utils/appConfig";
-import {Message, MESSAGE_CONTENT_TYPE, User} from "@prisma/client";
-import {response} from "express";
+import { MESSAGE_CONTENT_TYPE, User} from "@prisma/client";
 
 export function storeMessage(senderEmail: string, groupId: number, content: {
     type: MESSAGE_CONTENT_TYPE,
@@ -95,7 +94,6 @@ export function updateMessageRecepientStatus(userId: number, messageId: number) 
         data: {status},
         where: {messageId, userId}
     }).then(result => {
-
     })
 }
 
@@ -124,18 +122,16 @@ export function getUserGroups(userId: number) {
 export function changeUserStatus(userId: number, status: "ONLINE" | "OFFLINE" | "INACTIVE" | "BANNED" | "LEAVE" | "AWAY") {
     config._query.activityStatus.upsert({
         where: {
-            userId: userId
+          userId:userId
         },
         update: {
             status: status
         },
         create: {
-            user: {
-                connect: {
-                    id: userId
-                }
-            },
-            status: status,
+
+                userId:userId,
+                status: status,
+
         }
     }).then((result: any) => {
     })

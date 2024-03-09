@@ -2,22 +2,22 @@ import {
     changeUserStatus,
     checkIfReadByAll,
     createReceiptbyGroup,
-    getSocketGroup, getUserGroups,
+    getSocketGroup,
+    getUserGroups,
     storeMessage,
     updateMessageRecepientStatus
 } from "../message";
 import {Group, MESSAGE_CONTENT_TYPE} from "@prisma/client";
 import {hasher} from "../../utils/methods";
 import {Socket} from "socket.io";
-import {response} from "express";
 
 export const socketHandler = (socket: Socket) => {
     try {
         hasher._verify(socket.handshake.auth.session).then((response: any) => {
-            getUserGroups(response.user_id).then(res=>{
-                res.forEach((group: { Socket: { socket_id: string | string[]; }; })=>{
-                    socket.to(group.Socket.socket_id).emit(SocketEmitters.USERONLINE,{user:response.user_id})
-                    changeUserStatus(response.user_id,'ONLINE');
+            getUserGroups(response.user_id).then(res => {
+                res.forEach((group: { Socket: { socket_id: string | string[]; }; }) => {
+                    socket.to(group.Socket.socket_id).emit(SocketEmitters.USERONLINE, {user: response.user_id})
+                    changeUserStatus(response.user_id, 'ONLINE');
                 })
             })
         })
@@ -28,8 +28,7 @@ export const socketHandler = (socket: Socket) => {
             getSocketGroup(<string>socket.handshake.auth.socketID).then((group: Group) => {
                 hasher._verify(socket.handshake.auth.session).then((response: any) => {
                     storeMessage(<string>response.data, group.id, {
-                        type: MESSAGE_CONTENT_TYPE.TEXT,
-                        content: data.text
+                        type: MESSAGE_CONTENT_TYPE.TEXT, content: data.text
                     })
                         .then((result: any) => {
                             createReceiptbyGroup(group.id, result.id);
@@ -49,7 +48,7 @@ export const socketHandler = (socket: Socket) => {
             })
 
         })
-        socket.on('disconnect',()=>{
+        socket.on('disconnect', () => {
             hasher._verify(socket.handshake.auth.session).then((response: any) => {
                 changeUserStatus(response.user_id, 'OFFLINE');
                 getUserGroups(response.user_id).then(res => {
@@ -72,10 +71,7 @@ export const socketHandler = (socket: Socket) => {
             checkIfReadByAll(messageId).then((result: any) => {
                 if (result.ReadReceipt.filter((item: { status: string; }) => item.status !== 'Sent').length === 0) {
                     socket.emit(SocketEmitters.READBYALL, {
-                        ...result,
-                        User: result.sender,
-                        MessageContent: result.content,
-                        ReadByAll: true
+                        ...result, User: result.sender, MessageContent: result.content, ReadByAll: true
                     })
                 }
             })
