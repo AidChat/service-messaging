@@ -83,10 +83,7 @@ export const socketHandler = (socket: Socket) => {
     }
 };
 
-export interface Message {
-    content: string,
-    userId: number | string
-}
+
 
 export enum SocketListeners {
     _MESSAGE = "_MESSAGE",

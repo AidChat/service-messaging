@@ -14,7 +14,7 @@
     "nodemon": "^3.0.1",
     "prisma": "^5.3.1"
   },
-  "name": "service-messaging",
+  "name": "service-events",
   "version": "1.0.0",
   "main": "src/app.ts",
   "scripts": {
